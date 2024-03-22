@@ -4,6 +4,6 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks=1 --cpus-per-task=10
 #SBATCH --ntasks-per-node=1
-#SBATCH --nodelist=xgph5
+#SBATCH --nodelist=xgpe4
 
-srun ./bandwidthchain -ch xpgh6 -sh xgph5 -sport 6855 -auto
+srun ./bandwidthchain -ch xgpe5 -sh xgpe4 -sport 6855 -auto
