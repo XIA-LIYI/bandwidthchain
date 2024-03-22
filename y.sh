@@ -6,4 +6,4 @@
 #SBATCH --ntasks-per-node=1
 #SBATCH --nodelist=xgpe5
 
-srun ./bandwidthchain -ch xgpe4 -sh xgpe5 -sport 6855 -auto
+srun ./bandwidthchain -ch xgpe5 -sh xgpe4 -sport 6855 -client -auto
