@@ -10,3 +10,4 @@
 rm ./workers/*
 rm *.out
 rm ./controller/*.out
+rm ./controller/*.sh

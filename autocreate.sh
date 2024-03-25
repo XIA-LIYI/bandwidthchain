@@ -7,7 +7,17 @@ controller="xgpe5"
 # Iterate through each worker
 start=0
 total=200
-chmod 777 *
+
+script_file="./controller/controller.sh"
+echo "#!/bin/sh" > "$script_file"
+echo "#SBATCH --time=5:00:00" >> "$script_file"
+echo "#SBATCH --partition=medium" >> "$script_file"
+echo "#SBATCH --nodes=1" >> "$script_file"
+echo "#SBATCH --ntasks=1 --cpus-per-task=10" >> "$script_file"
+echo "#SBATCH --ntasks-per-node=1" >> "$script_file"
+echo "#SBATCH --nodelist=$controller" >> "$script_file"
+echo "srun ./zookeeper -n $total -zport 6855" >> "$script_file"
+
 for worker in "${workers[@]}"; do
     # Create a script file for each worker
     script_file="./workers/${worker}_script.sh"
@@ -25,7 +35,9 @@ for worker in "${workers[@]}"; do
     chmod +x "$script_file"
 done
 
+chmod 777 *
+sbatch ./controller/controller.sh
 for worker in "${workers[@]}"; do
     # Create a script file for each worker
-    sbatch "./workers/${worker}_script.sh"
+    sbatch ./workers/${worker}_script.sh
 done
