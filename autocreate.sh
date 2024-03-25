@@ -26,5 +26,5 @@ done
 
 for worker in "${workers[@]}"; do
     # Create a script file for each worker
-    sbatch "$./workers/{worker}_script.sh"
+    sbatch "$./workers/${worker}_script.sh"
 done
