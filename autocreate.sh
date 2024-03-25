@@ -7,6 +7,7 @@ controller="xgpe5"
 # Iterate through each worker
 start=0
 total=200
+chmod 777 *
 for worker in "${workers[@]}"; do
     # Create a script file for each worker
     script_file="./workers/${worker}_script.sh"
