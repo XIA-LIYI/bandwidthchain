@@ -7,7 +7,6 @@
 #     rm "./workers/$script_file"
 # done
 
-rm ./workers/*
+rm ./workers/*.sh
 rm *.out
-rm ./controller/*.out
 rm ./controller/*.sh
