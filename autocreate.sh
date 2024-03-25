@@ -39,7 +39,7 @@ chmod 777 *
 cd ./controller
 sbatch ./controller.sh
 sleep 5
-cd ../worker
+cd ../workers
 for worker in "${workers[@]}"; do
     # Create a script file for each worker
     sbatch ./workers/${worker}_script.sh
