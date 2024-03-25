@@ -1,8 +1,12 @@
 #!/bin/bash
 
-mapfile -t workers < machines.txt
+# mapfile -t workers < machines.txt
 
-for worker in "${workers[@]}"; do
-    script_file="${worker}_script.sh"
-    rm "./workers/$script_file"
-done
+# for worker in "${workers[@]}"; do
+#     script_file="${worker}_script.sh"
+#     rm "./workers/$script_file"
+# done
+
+rm ./workers/*
+rm *.out
+rm ./controller/*.out
