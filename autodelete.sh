@@ -8,5 +8,6 @@
 # done
 
 rm ./workers/*.sh
+rm ./workers/*.out
 rm *.out
 rm ./controller/*.sh
