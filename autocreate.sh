@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # List of worker names
-workers=("xgpf4" "xgpf5" "xgpf6" "xgpf7")
+mapfile -t workers < machines.txt
 # #!/bin/sh
 # #SBATCH --time=5:00:00
 # #SBATCH --partition=medium
