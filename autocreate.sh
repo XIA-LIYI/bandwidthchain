@@ -6,7 +6,8 @@ controller="xgpe5"
 
 # Iterate through each worker
 start=0
-total=200
+total=100
+gap=25
 
 script_file="./controller/controller.sh"
 echo "#!/bin/sh" > "$script_file"
@@ -16,7 +17,7 @@ echo "#SBATCH --nodes=1" >> "$script_file"
 echo "#SBATCH --ntasks=1 --cpus-per-task=10" >> "$script_file"
 echo "#SBATCH --ntasks-per-node=1" >> "$script_file"
 echo "#SBATCH --nodelist=$controller" >> "$script_file"
-echo "srun ./zookeeper -n $total -zport 6855" >> "$script_file"
+echo "srun ./zookeeper" >> "$script_file"
 
 for worker in "${workers[@]}"; do
     # Create a script file for each worker
@@ -29,8 +30,8 @@ for worker in "${workers[@]}"; do
     echo "#SBATCH --ntasks=1 --cpus-per-task=10" >> "$script_file"
     echo "#SBATCH --ntasks-per-node=1" >> "$script_file"
     echo "#SBATCH --nodelist=$worker" >> "$script_file"
-    echo "srun ./bandwidthchain -n $total -start $start -end $((start+50)) -za $controller -zport 6855" >> "$script_file"
-    start=$((start+50))
+    echo "srun ./bandwidthchain -n $total -start $start -end $((start+gap)) -za $controller -zport 6855" >> "$script_file"
+    start=$((start+gap))
     # Make the script executable
     chmod +x "$script_file"
 done
