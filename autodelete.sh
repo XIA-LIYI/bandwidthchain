@@ -11,3 +11,4 @@ rm ./workers/*.sh
 rm ./workers/*.out
 rm *.out
 rm ./controller/*.sh
+rm ./controller/*.out
