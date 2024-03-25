@@ -13,3 +13,4 @@ rm ./workers/*.log
 rm *.out
 rm ./controller/*.sh
 rm ./controller/*.out
+git restore .
