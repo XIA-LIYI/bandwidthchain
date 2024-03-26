@@ -28,7 +28,7 @@ for worker in "${workers[@]}"; do
     echo "#SBATCH --time=5:00:00" >> "$script_file"
     echo "#SBATCH --partition=medium" >> "$script_file"
     echo "#SBATCH --ntasks=10 --cpus-per-task=10" >> "$script_file"
-    echo "#SBATCH --ntasks-per-node=1" >> "$script_file"
+    echo "#SBATCH --ntasks-per-node=10" >> "$script_file"
     echo "#SBATCH --nodelist=$worker" >> "$script_file"
     for i in {1..10}; do
         echo "srun ./bandwidthchain $total -start $start -end $((start+gap)) -za $controller -zport 6855" >> "$script_file"
