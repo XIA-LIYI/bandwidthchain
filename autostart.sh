@@ -30,7 +30,7 @@ for worker in "${workers[@]}"; do
     echo "#SBATCH --ntasks=10 --cpus-per-task=2" >> "$script_file"
     echo "#SBATCH --ntasks-per-node=10" >> "$script_file"
     echo "#SBATCH --nodelist=$worker" >> "$script_file"
-    for i in {1..5}; do
+    for i in {1..10}; do
         echo "srun --ntasks=1 ./bandwidthchain -start $start -end $((start+gap)) -za 192.168.51.57 -zport 6855 &" >> "$script_file"
         start=$((start+gap))
     done
