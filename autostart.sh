@@ -2,7 +2,7 @@
 
 # List of worker names
 mapfile -t workers < machines.txt
-controller="192.168.51.57"
+controller="xgpe5"
 
 # Iterate through each worker
 start=0
@@ -31,7 +31,7 @@ for worker in "${workers[@]}"; do
     echo "#SBATCH --ntasks-per-node=10" >> "$script_file"
     echo "#SBATCH --nodelist=$worker" >> "$script_file"
     for i in {1..10}; do
-        echo "srun ./bandwidthchain $total -start $start -end $((start+gap)) -za $controller -zport 6855" >> "$script_file"
+        echo "srun ./bandwidthchain $total -start $start -end $((start+gap)) -za 192.168.51.57 -zport 6855" >> "$script_file"
         start=$((start+gap))
     done
     # Make the script executable
