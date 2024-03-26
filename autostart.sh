@@ -7,14 +7,14 @@ controller="xgpe5"
 # Iterate through each worker
 start=0
 total=200
-gap=5
+gap=50
 
 script_file="./controller/controller.sh"
 echo "#!/bin/sh" > "$script_file"
 echo "#SBATCH --time=5:00:00" >> "$script_file"
 echo "#SBATCH --partition=medium" >> "$script_file"
 echo "#SBATCH --nodes=1" >> "$script_file"
-echo "#SBATCH --ntasks=1 --cpus-per-task=10" >> "$script_file"
+echo "#SBATCH --ntasks=1 --cpus-per-task=5" >> "$script_file"
 echo "#SBATCH --ntasks-per-node=1" >> "$script_file"
 echo "#SBATCH --nodelist=$controller" >> "$script_file"
 echo "srun ./zookeeper" >> "$script_file"
@@ -27,14 +27,14 @@ for worker in "${workers[@]}"; do
     echo "#!/bin/bash" > "$script_file"
     echo "#SBATCH --time=5:00:00" >> "$script_file"
     echo "#SBATCH --partition=medium" >> "$script_file"
-    echo "#SBATCH --ntasks=10 --cpus-per-task=2" >> "$script_file"
-    echo "#SBATCH --ntasks-per-node=10" >> "$script_file"
+    echo "#SBATCH --ntasks=1 --cpus-per-task=10" >> "$script_file"
+    echo "#SBATCH --ntasks-per-node=1" >> "$script_file"
     echo "#SBATCH --nodelist=$worker" >> "$script_file"
-    for i in {1..10}; do
-        echo "srun --ntasks=1 ./bandwidthchain -start $start -end $((start+gap)) -za 192.168.51.57 -zport 6855 &" >> "$script_file"
-        start=$((start+gap))
-    done
-    echo "wait" >> "$script_file"
+    # for i in {1..1}; do
+    echo "srun --ntasks=1 ./bandwidthchain -start $start -end $((start+gap)) -za 192.168.51.57 -zport 6855" >> "$script_file"
+    start=$((start+gap))
+    # done
+    # echo "wait" >> "$script_file"
     # Make the script executable
     chmod +x "$script_file"
 done
