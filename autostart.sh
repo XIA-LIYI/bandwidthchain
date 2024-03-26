@@ -35,7 +35,7 @@ for worker in "${workers[@]}"; do
         then
             echo "srun --ntasks=1 ./bandwidthchain -start $start -end $((start+gap)) -za 192.168.51.57 -zport 6855" >> "$script_file"
         else
-            echo "srun --ntasks=1 ./bandwidthchain -start $start -end $((start+gap)) -za 192.168.51.57 -zport 6855&" >> "$script_file"
+            echo "srun --ntasks=1 ./bandwidthchain -start $start -end $((start+gap)) -za 192.168.51.57 -zport 6855 &" >> "$script_file"
         fi
         start=$((start+gap))
     done
