@@ -2,7 +2,7 @@
 
 # List of worker names
 mapfile -t workers < machines.txt
-controller="xgpe5"
+controller="192.168.51.57"
 
 # Iterate through each worker
 start=0
