@@ -1,0 +1,1 @@
+squeue --me -h -o "%i" | xargs scancel
