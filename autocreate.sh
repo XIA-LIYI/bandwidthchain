@@ -6,8 +6,8 @@ controller="xgpe5"
 
 # Iterate through each worker
 start=0
-total=100
-gap=25
+total=200
+gap=50
 
 script_file="./controller/controller.sh"
 echo "#!/bin/sh" > "$script_file"
