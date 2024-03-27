@@ -25,7 +25,7 @@ def write_to_file(nodes, filename):
         for node in nodes:
             f.write(node + '\n')
 
-def create_controller_script(controller, partition):
+def create_controller_script(controller, partition, time):
     directory = "controller"
     script_name = f"controller_script.sh"
     if not os.path.exists(directory):
@@ -107,10 +107,11 @@ if __name__ == "__main__":
     if len(idle_nodes) < args.number:
         print("No enough idle nodes now")
     else:
-        print(f"Idle nodes in '{args.partition}' partition:")
+        print(f"Zookeeper runs on {idle_nodes[0]}")
+        print(f"Bandwidthchain runs on '{args.partition}' partition:")
         for node in idle_nodes:
             print(node, end=" ")
-        
+        print("\n")
         write_to_file(idle_nodes[:args.number], 'machines.txt')
 
         print("Start running controller script")
@@ -119,7 +120,7 @@ if __name__ == "__main__":
         except Exception:
             print("No zookeeper")
         
-        create_controller_script(idle_nodes[0], args.partition)
+        create_controller_script(idle_nodes[0], args.partition, args.time)
         
         print("Start running ")
         try:
