@@ -1,0 +1,9 @@
+node    index   amount  CPUs                        RAM     cores   threads
+xcne	2--7	6	    2 x Intel Xeon Gold 6230	768GB   40      80
+xgpb	0-2	    3	    2 x Intel E5-2620 v4	    64GB    16	    32
+xgpc	3--9	7	    2 x Intel Xeon Silver 4108	128GB   16	    32
+xgpd	3--9	7	    2 x Intel Xeon Silver 4108	128GB   16	    32
+xgpe	3--11	9	    2 x Intel Xeon Silver 4116	256GB   24	    48
+xgpf	3--11	9	    2 x Intel Xeon Silver 4116	256GB   24	    48
+xgpg	3--9	7	    2x AMD Epyc 7352	        256GB	48	    96
+xgph	5--19	15	    2x Intel Xeon Gold 6326	    256GB	32	    64
