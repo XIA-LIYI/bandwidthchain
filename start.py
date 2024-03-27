@@ -2,6 +2,7 @@ import subprocess
 import sys
 import argparse
 import os
+import time
 
 def get_idle_nodes(partition):
     command = f'sinfo --Node --format="%8N %10P %5T %5c %8O" -p {partition}'
@@ -48,7 +49,7 @@ srun ./controller/zookeeper
 
     # Make the script executable
     os.chmod(script_path, 0o777)
-    subprocess.Popen(['sbatch', script_path])
+    subprocess.run(['sbatch', script_path])
 
     print(f"Created {script_name}")
 
@@ -114,7 +115,7 @@ if __name__ == "__main__":
         print("\n")
         write_to_file(idle_nodes[:args.number], 'machines.txt')
 
-        print("Start running controller script")
+        print("Start running zookeeper")
         try:
             os.chmod('./controller/zookeeper', 0o777)
         except Exception:
@@ -122,7 +123,9 @@ if __name__ == "__main__":
         
         create_controller_script(idle_nodes[0], args.partition, args.time)
         
-        print("Start running ")
+        time.sleep(2)
+
+        print("Start running bandwidthchain")
         try:
             os.chmod('./workers/bandwidthchain', 0o777)
         except Exception:
