@@ -48,7 +48,7 @@ srun ./controller/zookeeper
 
     # Make the script executable
     os.chmod(script_path, 0o777)
-    subprocess.run(['sh', script_path])
+    subprocess.Popen(['sh', script_path])
 
     print(f"Created {script_name}")
 
@@ -81,7 +81,7 @@ srun --ntasks=1 ./workers/bandwidthchain -start {start} -end {start + step} -za 
 
         # Make the script executable
         os.chmod(script_path, 0o777)
-        subprocess.run(['sh', script_path])
+        subprocess.Popen(['sh', script_path])
 
         print(f"Created {script_name}")
 
@@ -104,12 +104,12 @@ if __name__ == "__main__":
     if args.time == None:
         args.time = '5:00:00'
     idle_nodes = get_idle_nodes(args.partition)
-    if len(idle_nodes) < args.number:
+    if len(idle_nodes) < args.number + 1:
         print("No enough idle nodes now")
     else:
         print(f"Zookeeper runs on {idle_nodes[0]}")
         print(f"Bandwidthchain runs on '{args.partition}' partition:")
-        for node in idle_nodes:
+        for node in idle_nodes[1: args.number + 1]:
             print(node, end=" ")
         print("\n")
         write_to_file(idle_nodes[:args.number], 'machines.txt')
