@@ -81,7 +81,7 @@ srun --ntasks=1 ./workers/bandwidthchain -start {start} -end {start + step} -za 
 
         # Make the script executable
         os.chmod(script_path, 0o777)
-        subprocess.Popen(['sbatch', script_path])
+        subprocess.run(['sbatch', script_path])
 
         print(f"Created {script_name}")
 
