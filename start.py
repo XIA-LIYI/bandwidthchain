@@ -95,7 +95,7 @@ if __name__ == "__main__":
     parser.add_argument('--number', '-n', help='Number of machines needed') # default is 4
     parser.add_argument('--cpu', '-c', help='Number of cpus per machine') # default is 4
     parser.add_argument('--step', '-s', help='Number of nodes in one machines') # default is 50
-    parser.add_argument('--time', '-t', help='Experiment time') # default is 5:00:00
+    parser.add_argument('--time', '-t', help='Maximum experiment time') # default is 5:00:00
     args = parser.parse_args()
     if args.number == None:
         args.number = 4
