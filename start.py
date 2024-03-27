@@ -120,7 +120,8 @@ if __name__ == "__main__":
         args.time = '5:00:00'
 
     # Find nodes
-    idle_nodes = get_idle_nodes(args.partition).reverse()
+    idle_nodes = get_idle_nodes(args.partition)
+    idle_nodes.reverse()
     if len(idle_nodes) < args.number + 1:
         print("No enough idle nodes now")
     else:
