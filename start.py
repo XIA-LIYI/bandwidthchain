@@ -121,7 +121,7 @@ if __name__ == "__main__":
 
     # Find nodes
     idle_nodes = get_idle_nodes(args.partition)
-    idle_nodes.reverse()
+    # idle_nodes.reverse()
     if len(idle_nodes) < args.number + 1:
         print("No enough idle nodes now")
     else:
