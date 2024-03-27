@@ -1,4 +1,4 @@
-# bandwidthchain
+# bandwidthchain automation script
 
 1. Before start, run **./delete.sh** to delete all out and log files and run **./cancel.sh** to cancel all of running jobs.
 2. To start, run **python3 start.py** with optional flags:
