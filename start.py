@@ -104,16 +104,26 @@ if __name__ == "__main__":
     if args.time == None:
         args.time = '5:00:00'
     idle_nodes = get_idle_nodes(args.partition)
-    print(f"Idle nodes in '{args.partition}' partition:")
-    for node in idle_nodes:
-        print(node, end=" ")
-    
-    write_to_file(idle_nodes[:args.number], 'machines.txt')
+    if len(idle_nodes) < args.number:
+        print("No enough idle nodes now")
+    else:
+        print(f"Idle nodes in '{args.partition}' partition:")
+        for node in idle_nodes:
+            print(node, end=" ")
+        
+        write_to_file(idle_nodes[:args.number], 'machines.txt')
 
-    print("Start running controller script")
-    os.chmod('./controller/zookeeper', 0o777)
-    create_controller_script(idle_nodes[0], args.partition)
-    
-    print("Start running ")
-    os.chmod('./worker/bandwidthchain', 0o777)
-    create_worker_script(idle_nodes[0], args.number, idle_nodes[1: args.number + 1], args.partition, args.step, args.cpu, args.time)
+        print("Start running controller script")
+        try:
+            os.chmod('./controller/zookeeper', 0o777)
+        except Exception:
+            print("No zookeeper")
+        
+        create_controller_script(idle_nodes[0], args.partition)
+        
+        print("Start running ")
+        try:
+            os.chmod('./worker/bandwidthchain', 0o777)
+        except Exception:
+            print("No bandwidthchain")
+        create_worker_script(idle_nodes[0], args.number, idle_nodes[1: args.number + 1], args.partition, args.step, args.cpu, args.time)
