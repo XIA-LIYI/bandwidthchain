@@ -146,4 +146,4 @@ if __name__ == "__main__":
             os.chmod('./workers/bandwidthchain', 0o777)
         except Exception:
             print("No bandwidthchain")
-        create_worker_script(idle_nodes[0], args.number, idle_nodes[1: args.number + 1], args.partition, args.step, args.cpu, args.time)
+        create_worker_script(idle_nodes[0], args.number, idle_nodes[-1: -(args.number + 1): -1], args.partition, args.step, args.cpu, args.time)
