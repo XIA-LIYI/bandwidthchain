@@ -87,6 +87,7 @@ srun --ntasks=1 ./workers/bandwidthchain -start {start} -end {start + step} -za 
         print(f"Created {script_name}")
 
 if __name__ == "__main__":
+    # Parse input
     parser = argparse.ArgumentParser(description='Retrieve idle nodes based on partition.')
     parser.add_argument('--partition', '-p', help='Partition to filter by') # default is medium
     parser.add_argument('--number', '-n', help='Number of machines needed') # default is 4
@@ -96,14 +97,26 @@ if __name__ == "__main__":
     args = parser.parse_args()
     if args.number == None:
         args.number = 4
+    else:
+        args.number = int(args.number)
+
     if args.partition == None:
         args.partition = 'medium'
+
     if args.step == None:
         args.step = 50
+    else:
+        args.step = int(args.step)
+
     if args.cpu == None:
         args.cpu = 10
+    else:
+        args.cpu = int(args.cpu)
+
     if args.time == None:
         args.time = '5:00:00'
+
+    # Find nodes
     idle_nodes = get_idle_nodes(args.partition)
     if len(idle_nodes) < args.number + 1:
         print("No enough idle nodes now")
@@ -113,8 +126,8 @@ if __name__ == "__main__":
         for node in idle_nodes[1: args.number + 1]:
             print(node, end=" ")
         print("\n")
-        write_to_file(idle_nodes[:args.number], 'machines.txt')
 
+        # Run scripts
         print("Start running zookeeper")
         try:
             os.chmod('./controller/zookeeper', 0o777)
