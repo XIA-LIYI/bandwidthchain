@@ -48,7 +48,7 @@ srun ./controller/zookeeper
 
     # Make the script executable
     os.chmod(script_path, 0o777)
-    subprocess.Popen(['sh', script_path])
+    subprocess.Popen(['sbatch', script_path])
 
     print(f"Created {script_name}")
 
@@ -81,7 +81,7 @@ srun --ntasks=1 ./workers/bandwidthchain -start {start} -end {start + step} -za 
 
         # Make the script executable
         os.chmod(script_path, 0o777)
-        subprocess.Popen(['sh', script_path])
+        subprocess.Popen(['sbatch', script_path])
 
         print(f"Created {script_name}")
 
