@@ -120,7 +120,7 @@ if __name__ == "__main__":
         args.time = '5:00:00'
 
     # Find nodes
-    idle_nodes = get_idle_nodes(args.partition)
+    idle_nodes = get_idle_nodes(args.partition).reverse()
     if len(idle_nodes) < args.number + 1:
         print("No enough idle nodes now")
     else:
@@ -146,4 +146,4 @@ if __name__ == "__main__":
             os.chmod('./workers/bandwidthchain', 0o777)
         except Exception:
             print("No bandwidthchain")
-        create_worker_script(idle_nodes[0], args.number, idle_nodes[-1: -(args.number + 1): -1], args.partition, args.step, args.cpu, args.time)
+        create_worker_script(idle_nodes[0], args.number, idle_nodes[1: (args.number + 1)], args.partition, args.step, args.cpu, args.time)
