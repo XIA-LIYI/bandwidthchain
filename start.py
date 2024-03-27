@@ -40,7 +40,7 @@ def create_controller_script(controller, partition, time):
 #SBATCH --ntasks-per-node=1
 #SBATCH --nodelist={controller}
 
-srun ./zookeeper
+srun ./controller/zookeeper
 """
     script_path = os.path.join(directory, script_name)
     with open(script_path, "w") as file:
@@ -72,7 +72,7 @@ def create_worker_script(controller, num_scripts, nodes, partition, step, cpu, t
 #SBATCH --ntasks-per-node=1
 #SBATCH --nodelist={nodes[i]}
 
-srun --ntasks=1 ./bandwidthchain -start {start} -end {start + step} -za {controller} -zport 6855
+srun --ntasks=1 ./workers/bandwidthchain -start {start} -end {start + step} -za {controller} -zport 6855
 """
         start += step
         script_path = os.path.join(directory, script_name)
@@ -124,7 +124,7 @@ if __name__ == "__main__":
         
         print("Start running ")
         try:
-            os.chmod('./worker/bandwidthchain', 0o777)
+            os.chmod('./workers/bandwidthchain', 0o777)
         except Exception:
             print("No bandwidthchain")
         create_worker_script(idle_nodes[0], args.number, idle_nodes[1: args.number + 1], args.partition, args.step, args.cpu, args.time)
