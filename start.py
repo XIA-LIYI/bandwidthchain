@@ -68,7 +68,7 @@ def create_worker_script(controller, num_scripts, nodes, partition, step, cpu, t
 #SBATCH --time={time}
 #SBATCH --partition={partition}
 #SBATCH --nodes=1
-#SBATCH --ntasks=1 --cpus-per-task=cpu
+#SBATCH --ntasks=1 --cpus-per-task={cpu}
 #SBATCH --ntasks-per-node=1
 #SBATCH --nodelist={nodes[i]}
 
