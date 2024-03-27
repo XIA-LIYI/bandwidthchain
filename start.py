@@ -139,7 +139,7 @@ if __name__ == "__main__":
         
         create_controller_script(idle_nodes[0], args.partition, args.time)
         
-        time.sleep(2)
+        time.sleep(5)
 
         print("Start running bandwidthchain")
         try:
