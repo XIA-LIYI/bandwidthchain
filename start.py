@@ -5,6 +5,8 @@ import argparse
 import os
 import time
 
+exclusion_list = ['xgpe10', 'xgpe11']
+
 def get_idle_nodes(partition):
     command = f'sinfo --Node --format="%8N %10P %5T %5c %8O" -p {partition}'
     try:
@@ -16,6 +18,8 @@ def get_idle_nodes(partition):
             if len(node_info) == 5:
                 node_name, partition, state, _, _ = node_info
                 if node_name[:4] != 'xcne' and node_name[1] != 'g':
+                    continue
+                if node_name in exclusion_list:
                     continue
                 if state.strip() == 'idle':
                     nodes.append(node_name)
