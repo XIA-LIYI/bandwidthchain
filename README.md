@@ -6,4 +6,4 @@
     * --partition, -p: partition to filter by, default partition is medium
     * --cpu, -c: number of cpus per machine, default value is 10
     * --step, -s: number of nodes per machine, default value is 50
-    * --time, -t: maximum experiment time
+    * --time, -t: maximum experiment time, default time is 5:00:00. Note that format of time is DD-HH:MM:SS.
