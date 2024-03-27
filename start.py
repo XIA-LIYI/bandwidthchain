@@ -14,6 +14,8 @@ def get_idle_nodes(partition):
             node_info = line.split()
             if len(node_info) == 5:
                 node_name, partition, state, _, _ = node_info
+                if node_name[:4] != 'xcne' and node_name[1] != 'g':
+                    continue
                 if state.strip() == 'idle':
                     nodes.append(node_name)
         return nodes
