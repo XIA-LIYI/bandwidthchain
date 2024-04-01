@@ -100,7 +100,7 @@ def create_worker_script(controller, num_scripts, nodes, partition, step, cpu, t
 #SBATCH --nodes=1
 #SBATCH --ntasks=1 --cpus-per-task={cpu}
 #SBATCH --ntasks-per-node=1
-#SBATCH --nodelist={nodes[i]}
+#SBATCH --nodelist={nodes[i][0]}
 
 srun --ntasks=1 ./workers/bandwidthchain -start {start} -end {start + step} -za {controller} -zport 6855
 """
