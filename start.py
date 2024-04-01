@@ -7,7 +7,27 @@ import time
 
 exclusion_list = ['xgpe10', 'xgpe11']
 
-def get_idle_nodes(partition):
+def get_nodes(partition):
+    standard_nodes = get_nodes_with_partition("standard")
+    medium_nodes = get_nodes_with_partition("medium")
+    long_nodes = get_nodes_with_long("long")
+    if partition == "long":
+        return long_nodes
+    result.extend(long_nodes)
+    if partition == "medium":
+        for node in medium_nodes:
+            if node in result:
+                continue
+            result.append(node)
+        return result
+    if partition == "long":
+        for node in long_nodes:
+            if node in result:
+                continue
+            result.append(node)
+        return result
+
+def get_nodes_with_partition(partition):
     command = f'sinfo --Node --format="%8N %10P %5T %5c %8O" -p {partition}'
     try:
         output = subprocess.check_output(command, shell=True, universal_newlines=True)
@@ -74,7 +94,7 @@ def create_worker_script(controller, num_scripts, nodes, partition, step, cpu, t
         script_content = f"""#!/bin/bash
 
 #SBATCH --time={time}
-#SBATCH --partition={partition}
+
 #SBATCH --nodes=1
 #SBATCH --ntasks=1 --cpus-per-task={cpu}
 #SBATCH --ntasks-per-node=1
@@ -96,7 +116,7 @@ srun --ntasks=1 ./workers/bandwidthchain -start {start} -end {start + step} -za 
 if __name__ == "__main__":
     # Parse input
     parser = argparse.ArgumentParser(description='Retrieve idle nodes based on partition.')
-    parser.add_argument('--partition', '-p', help='Partition to filter by') # default is medium
+    # parser.add_argument('--partition', '-p', help='Partition to filter by') # default is medium
     parser.add_argument('--number', '-n', help='Number of machines needed') # default is 4
     parser.add_argument('--cpu', '-c', help='Number of cpus per machine') # default is 4
     parser.add_argument('--step', '-s', help='Number of nodes in one machines') # default is 50
@@ -107,8 +127,8 @@ if __name__ == "__main__":
     else:
         args.number = int(args.number)
 
-    if args.partition == None:
-        args.partition = 'medium'
+    # if args.partition == None:
+    #     args.partition = 'medium'
 
     if args.step == None:
         args.step = 50
@@ -124,13 +144,13 @@ if __name__ == "__main__":
         args.time = '5:00:00'
 
     # Find nodes
-    idle_nodes = get_idle_nodes(args.partition)
+    idle_nodes = get_nodes(args.partition)
     # idle_nodes.reverse()
     if len(idle_nodes) < args.number + 1:
         print("No enough idle nodes now")
     else:
         print(f"Zookeeper runs on {idle_nodes[0]}")
-        print(f"Bandwidthchain runs on '{args.partition}' partition:")
+        print(f"Bandwidthchain runs on:")
         for node in idle_nodes[1: args.number + 1]:
             print(node, end=" ")
         print("\n")
