@@ -11,21 +11,22 @@ def get_nodes(partition):
     standard_nodes = get_nodes_with_partition("standard")
     medium_nodes = get_nodes_with_partition("medium")
     long_nodes = get_nodes_with_long("long")
+    results = []
+    results.extend(long_nodes)
     if partition == "long":
-        return long_nodes
-    result.extend(long_nodes)
+        return results
     if partition == "medium":
         for node in medium_nodes:
-            if node in result:
+            if node in results:
                 continue
-            result.append(node)
-        return result
+            results.append(node)
+        return results
     if partition == "long":
         for node in long_nodes:
-            if node in result:
+            if node in results:
                 continue
-            result.append(node)
-        return result
+            results.append(node)
+        return results
 
 def get_nodes_with_partition(partition):
     command = f'sinfo --Node --format="%8N %10P %5T %5c %8O" -p {partition}'
