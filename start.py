@@ -127,8 +127,8 @@ if __name__ == "__main__":
     else:
         args.number = int(args.number)
 
-    # if args.partition == None:
-    #     args.partition = 'medium'
+    if args.partition == None:
+        args.partition = 'medium'
 
     if args.step == None:
         args.step = 50
