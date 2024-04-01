@@ -55,7 +55,7 @@ def write_to_file(nodes, filename):
         for node in nodes:
             f.write(node + '\n')
 
-def create_controller_script(controller, partition, time):
+def create_controller_script(controller, time):
     directory = "controller"
     script_name = f"controller_script.sh"
     if not os.path.exists(directory):
@@ -64,11 +64,11 @@ def create_controller_script(controller, partition, time):
     script_content = f"""#!/bin/bash
 
 #SBATCH --time={time}
-#SBATCH --partition={partition}
+#SBATCH --partition={controller[1]}
 #SBATCH --nodes=1
 #SBATCH --ntasks=1 --cpus-per-task=10
 #SBATCH --ntasks-per-node=1
-#SBATCH --nodelist={controller}
+#SBATCH --nodelist={controller[0]}
 
 srun ./controller/zookeeper
 """
@@ -164,7 +164,7 @@ if __name__ == "__main__":
         except Exception:
             print("No zookeeper")
         
-        create_controller_script(idle_nodes[0], args.partition, args.time)
+        create_controller_script(idle_nodes[0], args.time)
         
         time.sleep(5)
 
@@ -173,4 +173,4 @@ if __name__ == "__main__":
             os.chmod('./workers/bandwidthchain', 0o777)
         except Exception:
             print("No bandwidthchain")
-        create_worker_script(idle_nodes[0], args.number, idle_nodes[1: (args.number + 1)], args.partition, args.step, args.cpu, args.time)
+        create_worker_script(idle_nodes[0][0], args.number, idle_nodes[1: (args.number + 1)], args.partition, args.step, args.cpu, args.time)
