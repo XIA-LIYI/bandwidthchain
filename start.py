@@ -116,7 +116,7 @@ srun --ntasks=1 ./workers/bandwidthchain -start {start} -end {start + step} -za 
 if __name__ == "__main__":
     # Parse input
     parser = argparse.ArgumentParser(description='Retrieve idle nodes based on partition.')
-    # parser.add_argument('--partition', '-p', help='Partition to filter by') # default is medium
+    parser.add_argument('--partition', '-p', help='Partition to filter by') # default is medium
     parser.add_argument('--number', '-n', help='Number of machines needed') # default is 4
     parser.add_argument('--cpu', '-c', help='Number of cpus per machine') # default is 4
     parser.add_argument('--step', '-s', help='Number of nodes in one machines') # default is 50
