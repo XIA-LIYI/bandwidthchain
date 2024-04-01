@@ -12,20 +12,21 @@ def get_nodes(partition):
     medium_nodes = get_nodes_with_partition("medium")
     long_nodes = get_nodes_with_partition("long")
     results = []
-    results.extend(long_nodes)
     if partition == "long":
+        for node in long_nodes:
+            results.append([node, "long"])
         return results
     if partition == "medium":
         for node in medium_nodes:
             if node in results:
                 continue
-            results.append(node)
+            results.append([node, "medium"])
         return results
-    if partition == "long":
+    if partition == "standard":
         for node in long_nodes:
             if node in results:
                 continue
-            results.append(node)
+            results.append([node, "standard"])
         return results
 
 def get_nodes_with_partition(partition):
@@ -90,12 +91,12 @@ def create_worker_script(controller, num_scripts, nodes, partition, step, cpu, t
     # Generate and save shell scripts
     start = 0
     for i in range(num_scripts):
-        script_name = f"{nodes[i]}_script.sh"
+        script_name = f"{nodes[i][0]}_script.sh"
         
         script_content = f"""#!/bin/bash
 
 #SBATCH --time={time}
-
+#SBATCH --partition={nodes[i][1]}
 #SBATCH --nodes=1
 #SBATCH --ntasks=1 --cpus-per-task={cpu}
 #SBATCH --ntasks-per-node=1
