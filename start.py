@@ -10,7 +10,7 @@ exclusion_list = ['xgpe10', 'xgpe11']
 def get_nodes(partition):
     standard_nodes = get_nodes_with_partition("standard")
     medium_nodes = get_nodes_with_partition("medium")
-    long_nodes = get_nodes_with_long("long")
+    long_nodes = get_nodes_with_partition("long")
     results = []
     results.extend(long_nodes)
     if partition == "long":
