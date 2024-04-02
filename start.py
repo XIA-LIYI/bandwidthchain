@@ -15,7 +15,7 @@ def get_nodes(partition, cpu_required):
     result_idle_nodes = []
     result_mix_nodes = []
     print(long_nodes)
-    for [idle_nodes, mix_nodes] in long_nodes:
+    for idle_nodes, mix_nodes in long_nodes:
         for node in idle_nodes:
             if node in result_idle_nodes:
                 continue
@@ -27,7 +27,7 @@ def get_nodes(partition, cpu_required):
                 
     if partition == "long":
         return [result_idle_nodes, result_mix_nodes]
-    for [idle_nodes, mix_nodes] in medium_nodes:
+    for idle_nodes, mix_nodes in medium_nodes:
         for node in idle_nodes:
             if node in result_idle_nodes:
                 continue
@@ -38,7 +38,7 @@ def get_nodes(partition, cpu_required):
             result_mix_nodes.append([node, "medium"])
     if partition == "medium":
         return [result_idle_nodes, result_mix_nodes]
-    for [idle_nodes, mix_nodes] in standard_nodes:
+    for idle_nodes, mix_nodes in standard_nodes:
         for node in idle_nodes:
             if node in result_idle_nodes:
                 continue
