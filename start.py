@@ -81,15 +81,52 @@ srun ./controller/zookeeper
     subprocess.run(['sbatch', script_path])
 
     print(f"Created {script_name}")
-
-def create_worker_script(controller, num_scripts, nodes, partition, step, cpu, time):
+def create_worker_script_in_one_file(controller, num_scripts, nodes, partition, start, step, cpu, time):
     # Ensure directory exists
     directory = "workers"
     if not os.path.exists(directory):
         os.makedirs(directory)
 
     # Generate and save shell scripts
-    start = 0
+    script_name = "one_script.sh"
+    nodes_lists = {}
+    for i in nodes:
+        if i[1] in nodes_lists:
+            nodes_lists[i[1]] = nodes_list[i[1]] + i[0] + ','
+        else:
+            nodes_lists[i[1]] = i[0] + ','
+    sruns = f""
+    for partition, nodes_list in nodes_lists:  
+        sruns += f"srun --ntasks=1 ./workers/bandwidthchain -start {start} -end {start + step} -za {controller} -zport 6855 &\n"
+        start += step
+    script_content = f"""#!/bin/bash
+#SBATCH --time={time}
+#SBATCH --partition={partition}
+#SBATCH --nodes=1
+#SBATCH --ntasks=1 --cpus-per-task={cpu}
+#SBATCH --ntasks-per-node=1
+#SBATCH --nodelist={nodes_list[: len(nodes_list) - 1]}
+
+{sruns}
+wait
+"""
+        
+        script_path = os.path.join(directory, script_name)
+        with open(script_path, "w") as file:
+            file.write(script_content)
+
+        # Make the script executable
+        os.chmod(script_path, 0o777)
+        subprocess.run(['sbatch', script_path])
+
+        print(f"Created {script_name}")    
+def create_worker_script(controller, num_scripts, nodes, partition, start, step, cpu, time):
+    # Ensure directory exists
+    directory = "workers"
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    # Generate and save shell scripts
     for i in range(num_scripts):
         script_name = f"{nodes[i][0]}_script.sh"
         
@@ -173,4 +210,8 @@ if __name__ == "__main__":
             os.chmod('./workers/bandwidthchain', 0o777)
         except Exception:
             print("No bandwidthchain")
-        create_worker_script(idle_nodes[0][0], args.number, idle_nodes[1: (args.number + 1)], args.partition, args.step, args.cpu, args.time)
+        if args.number >= 15:
+            create_worker_script(idle_nodes[0][0], args.number, idle_nodes[1: 15], 0, args.step, args.cpu, args.time)
+            create_worker_script_in_one_file(idle_nodes[0][0], args.number, idle_nodes[15: (args.number + 1)], 14 * args.step, args.step, args.cpu, args.time)
+        else:
+            create_worker_script(idle_nodes[0][0], args.number, idle_nodes[1: (args.number + 1)], args.partition, args.step, args.cpu, args.time)
