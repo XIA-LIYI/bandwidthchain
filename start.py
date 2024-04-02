@@ -127,17 +127,17 @@ def create_worker_script(controller, num_scripts, nodes, start, step, cpu, time)
         os.makedirs(directory)
 
     # Generate and save shell scripts
-    for i in range(num_scripts):
-        script_name = f"{nodes[i][0]}_script.sh"
+    for i in nodes:
+        script_name = f"{i[0]}_script.sh"
         
         script_content = f"""#!/bin/bash
 
 #SBATCH --time={time}
-#SBATCH --partition={nodes[i][1]}
+#SBATCH --partition={i[1]}
 #SBATCH --nodes=1
 #SBATCH --ntasks=1 --cpus-per-task={cpu}
 #SBATCH --ntasks-per-node=1
-#SBATCH --nodelist={nodes[i][0]}
+#SBATCH --nodelist={i[0]}
 
 srun --ntasks=1 ./workers/bandwidthchain -start {start} -end {start + step} -za {controller} -zport 6855
 """
