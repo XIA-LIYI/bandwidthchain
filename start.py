@@ -53,7 +53,7 @@ def get_nodes_with_partition(partition, cpu_required):
                     nodes.append(node_name)
                     continue
                 _, idle_cpus, _, _ = cpus.split('/')
-                if idle_cpus >= cpu_required:
+                if int(idle_cpus) >= cpu_required:
                     nodes.append(node_name) 
         return nodes
     except subprocess.CalledProcessError:
