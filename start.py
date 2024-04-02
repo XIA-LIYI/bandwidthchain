@@ -40,7 +40,7 @@ def get_nodes_with_partition(partition):
             node_info = line.split()
             if len(node_info) == 5:
                 node_name, partition, state, _, _ = node_info
-                if node_name[:4] not in user_prefix:
+                if node_name[:4] not in use_prefix:
                     continue
                 if node_name in exclusion_list:
                     continue
