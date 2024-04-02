@@ -117,7 +117,7 @@ wait
         
         script_path = os.path.join(directory, script_name)
         with open(script_path, "w") as file:
-        file.write(script_content)
+            file.write(script_content)
 
         # Make the script executable
         os.chmod(script_path, 0o777)
