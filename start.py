@@ -5,7 +5,7 @@ import argparse
 import os
 import time
 
-exclusion_list = ['xgpe10', 'xgpe11']
+exclusion_list = ['xgpe10', 'xgpe11', 'xgpf10', 'xgpf11']
 
 def get_nodes(partition):
     standard_nodes = get_nodes_with_partition("standard")
