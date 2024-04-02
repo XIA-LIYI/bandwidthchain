@@ -98,7 +98,7 @@ def create_worker_script_in_one_file(controller, num_scripts, nodes, start, step
             nodes_by_partition[i[1]] = {'count': 1, 'list':i[0] + ','}
     
     for partition, nodes_info in nodes_by_partition.items():
-        script_name = "partition_script.sh"
+        script_name = f"{partition}_script.sh"
         sruns = f""
         for i in range(nodes_info['count']):
             sruns += f"srun --ntasks=1 ./workers/bandwidthchain -start {start} -end {start + step} -za {controller} -zport 6855 &\n"
@@ -106,8 +106,8 @@ def create_worker_script_in_one_file(controller, num_scripts, nodes, start, step
         script_content = f"""#!/bin/bash
 #SBATCH --time={time}
 #SBATCH --partition={partition}
-#SBATCH --nodes=1
-#SBATCH --ntasks=1 --cpus-per-task={cpu}
+#SBATCH --nodes={nodes_info['count']}
+#SBATCH --ntasks={nodes_info['count']} --cpus-per-task={cpu}
 #SBATCH --ntasks-per-node=1
 #SBATCH --nodelist={nodes_info['list'][: len(nodes_info['list']) - 1]}
 
