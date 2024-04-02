@@ -14,6 +14,7 @@ def get_nodes(partition):
     long_nodes = get_nodes_with_partition("long")
     selected_nodes = []
     results = []
+    print(long_nodes)
     for node in long_nodes:
         selected_nodes.append(node)
         results.append([node, "long"])
