@@ -5,6 +5,7 @@ import argparse
 import os
 import time
 
+use_prefix = ['xgpc', 'xgpd', 'xgpe', 'xgpf', 'xgph', 'xgpg', 'xcne', 'amdg']
 exclusion_list = ['xgpe10', 'xgpe11', 'xgpf10', 'xgpf11']
 
 def get_nodes(partition):
@@ -39,7 +40,7 @@ def get_nodes_with_partition(partition):
             node_info = line.split()
             if len(node_info) == 5:
                 node_name, partition, state, _, _ = node_info
-                if node_name[:4] != 'xcne' and node_name[1] != 'g':
+                if node_name[:4] not in user_prefix:
                     continue
                 if node_name in exclusion_list:
                     continue
