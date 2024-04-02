@@ -13,36 +13,43 @@ def get_nodes(partition, cpu_required):
     medium_nodes = get_nodes_with_partition("medium", cpu_required)
     long_nodes = get_nodes_with_partition("long", cpu_required)
     result_idle_nodes = []
+    record_idle_nodes = []
     result_mix_nodes = []
-
+    record_mix_nodes = []
     for node in long_nodes[0]:
-        if node in result_idle_nodes:
+        if node in record_idle_nodes:
             continue
+        record_idle_nodes.append(node)
         result_idle_nodes.append([node, "long"])
     for node in long_nodes[1]:
-        if node in result_mix_nodes:
+        if node in record_mix_nodes:
             continue
+        record_mix_nodes.append(node)
         result_mix_nodes.append([node, "long"])
                 
     if partition == "long":
         return [result_idle_nodes, result_mix_nodes]
     for node in medium_nodes[0]:
-        if node in result_idle_nodes:
+        if node in record_idle_nodes:
             continue
+        record_idle_nodes.append(node)
         result_idle_nodes.append([node, "medium"])
     for node in medium_nodes[1]:
-        if node in result_mix_nodes:
+        if node in record_mix_nodes:
             continue
+        record_mix_nodes.append(node)
         result_mix_nodes.append([node, "medium"])
     if partition == "medium":
         return [result_idle_nodes, result_mix_nodes]
     for node in standard_nodes[0]:
-        if node in result_idle_nodes:
+        if node in record_idle_nodes:
             continue
+        record_idle_nodes.append(node)
         result_idle_nodes.append([node, "standard"])
     for node in standard_nodes[1]:
-        if node in result_mix_nodes:
+        if node in record_mix_nodes:
             continue
+        record_mix_nodes.append(node)
         result_mix_nodes.append([node, "standard"])
     if partition == "standard":
         return [result_idle_nodes, result_mix_nodes]
