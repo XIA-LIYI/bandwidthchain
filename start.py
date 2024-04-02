@@ -111,15 +111,15 @@ def create_worker_script_in_one_file(controller, num_scripts, nodes, partition, 
 wait
 """
         
-        script_path = os.path.join(directory, script_name)
-        with open(script_path, "w") as file:
-            file.write(script_content)
+    script_path = os.path.join(directory, script_name)
+    with open(script_path, "w") as file:
+        file.write(script_content)
 
-        # Make the script executable
-        os.chmod(script_path, 0o777)
-        subprocess.run(['sbatch', script_path])
+    # Make the script executable
+    os.chmod(script_path, 0o777)
+    subprocess.run(['sbatch', script_path])
 
-        print(f"Created {script_name}")    
+    print(f"Created {script_name}")    
 def create_worker_script(controller, num_scripts, nodes, partition, start, step, cpu, time):
     # Ensure directory exists
     directory = "workers"
