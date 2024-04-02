@@ -12,21 +12,25 @@ def get_nodes(partition):
     standard_nodes = get_nodes_with_partition("standard")
     medium_nodes = get_nodes_with_partition("medium")
     long_nodes = get_nodes_with_partition("long")
+    selected_nodes = []
     results = []
     for node in long_nodes:
+        selected_nodes.append(node)
         results.append([node, "long"])
     if partition == "long":
         return results
     print(results)
     for node in medium_nodes:
-        if node in results:
+        if node in selected_nodes:
             continue
+        selected_nodes.append(node)
         results.append([node, "medium"])
     if partition == "medium":
         return results
     for node in standard_nodes:
-        if node in results:
+        if node in selected_nodes:
             continue
+        selected_nodes.append(node)
         results.append([node, "standard"])
     if partition == "standard":
         return results
