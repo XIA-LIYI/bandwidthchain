@@ -93,7 +93,7 @@ def create_worker_script_in_one_file(controller, num_scripts, nodes, start, step
     for i in nodes:
         if i[1] in nodes_by_partition:
             nodes_by_partition[i[1]]['count'] += 1
-            nodes_by_partition[i[1]]['list'] = nodes_list[i[1]] + i[0] + ','
+            nodes_by_partition[i[1]]['list'] = nodes_by_partition[i[1]]['list'] + i[0] + ','
         else:
             nodes_by_partition[i[1]] = {'count': 1, 'list':i[0] + ','}
     
