@@ -19,7 +19,6 @@ def get_nodes(partition):
         results.append([node, "long"])
     if partition == "long":
         return results
-    print(results)
     for node in medium_nodes:
         if node in selected_nodes:
             continue
