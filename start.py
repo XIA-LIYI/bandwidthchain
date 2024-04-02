@@ -12,35 +12,51 @@ def get_nodes(partition, cpu_required):
     standard_nodes = get_nodes_with_partition("standard", cpu_required)
     medium_nodes = get_nodes_with_partition("medium", cpu_required)
     long_nodes = get_nodes_with_partition("long", cpu_required)
-    selected_nodes = []
-    results = []
+    result_idle_nodes = []
+    result_mix_nodes = []
     print(long_nodes)
-    for node in long_nodes:
-        selected_nodes.append(node)
-        results.append([node, "long"])
+    for [idle_nodes, mix_nodes] in long_nodes:
+        for node in idle_nodes:
+            if node in result_idle_nodes:
+                continue
+            result_idle_nodes.append([node, "long"])
+        for node in mix_nodes:
+            if node in result_mix_nodes:
+                continue
+            result_mix_nodes.append([node, "long"])
+                
     if partition == "long":
-        return results
-    for node in medium_nodes:
-        if node in selected_nodes:
-            continue
-        selected_nodes.append(node)
-        results.append([node, "medium"])
+        return [result_idle_nodes, result_mix_nodes]
+    for [idle_nodes, mix_nodes] in medium_nodes:
+        for node in idle_nodes:
+            if node in result_idle_nodes:
+                continue
+            result_idle_nodes.append([node, "medium"])
+        for node in mix_nodes:
+            if node in result_mix_nodes:
+                continue
+            result_mix_nodes.append([node, "medium"])
     if partition == "medium":
-        return results
-    for node in standard_nodes:
-        if node in selected_nodes:
-            continue
-        selected_nodes.append(node)
-        results.append([node, "standard"])
+        return [result_idle_nodes, result_mix_nodes]
+    for [idle_nodes, mix_nodes] in standard_nodes:
+        for node in idle_nodes:
+            if node in result_idle_nodes:
+                continue
+            result_idle_nodes.append([node, "standard"])
+        for node in mix_nodes:
+            if node in result_mix_nodes:
+                continue
+            result_mix_nodes.append([node, "standard"])
     if partition == "standard":
-        return results
+        return [result_idle_nodes, result_mix_nodes]
 
 def get_nodes_with_partition(partition, cpu_required):
     command = f'sinfo --Node --format="%8N %10P %5T %5c %8O %20C" -p {partition}'
     try:
         output = subprocess.check_output(command, shell=True, universal_newlines=True)
         lines = output.strip().split('\n')[1:]  # Skip header line
-        nodes = []
+        idle_nodes = []
+        mix_nodes = []
         for line in lines:
             node_info = line.split()
             if len(node_info) == 6:
@@ -50,12 +66,12 @@ def get_nodes_with_partition(partition, cpu_required):
                 if node_name in exclusion_list:
                     continue
                 if state.strip() == 'idle':
-                    nodes.append(node_name)
+                    idle_nodes.append(node_name)
                     continue
                 _, idle_cpus, _, _ = cpus.split('/')
-                if int(idle_cpus) >= cpu_required:
-                    nodes.append(node_name) 
-        return nodes
+                if int(idle_cpus) >= 2 * cpu_required:
+                    mix_nodes.append(node_name) 
+        return [idle_nodes, mix_nodes]
     except subprocess.CalledProcessError:
         print("Error executing command.")
         return []
@@ -197,11 +213,13 @@ if __name__ == "__main__":
         args.time = '5:00:00'
 
     # Find nodes
-    idle_nodes = get_nodes(args.partition, args.cpu)
+    idle_nodes, mix_nodes = get_nodes(args.partition, args.cpu)
     idle_nodes.reverse()
-    if len(idle_nodes) < args.number + 1:
+    mix_nodes.reverse()
+    if len(idle_nodes) + len(mix_nodes) < args.number + 1:
         print("No enough idle nodes now")
     else:
+        idle_nodes.extend(mix_nodes)
         print(f"Zookeeper runs on {idle_nodes[0]}")
         print(f"Bandwidthchain runs on:")
         for node in idle_nodes[1: args.number + 1]:
