@@ -22,7 +22,7 @@ def get_nodes(partition):
         results.append([node, "medium"])
     if partition == "medium":
         return results
-    for node in long_nodes:
+    for node in standard_nodes:
         if node in results:
             continue
         results.append([node, "standard"])
