@@ -8,10 +8,10 @@ import time
 use_prefix = ['xgpc', 'xgpd', 'xgpe', 'xgpf', 'xgph', 'xgpg', 'xcne', 'amdg']
 exclusion_list = ['xgpe10', 'xgpe11', 'xgpf10', 'xgpf11']
 
-def get_nodes(partition):
-    standard_nodes = get_nodes_with_partition("standard")
-    medium_nodes = get_nodes_with_partition("medium")
-    long_nodes = get_nodes_with_partition("long")
+def get_nodes(partition, cpu_required):
+    standard_nodes = get_nodes_with_partition("standard", cpu_required)
+    medium_nodes = get_nodes_with_partition("medium", cpu_required)
+    long_nodes = get_nodes_with_partition("long", cpu_required)
     selected_nodes = []
     results = []
     print(long_nodes)
@@ -35,22 +35,26 @@ def get_nodes(partition):
     if partition == "standard":
         return results
 
-def get_nodes_with_partition(partition):
-    command = f'sinfo --Node --format="%8N %10P %5T %5c %8O" -p {partition}'
+def get_nodes_with_partition(partition, cpu_required):
+    command = f'sinfo --Node --format="%8N %10P %5T %5c %8O %20C" -p {partition}'
     try:
         output = subprocess.check_output(command, shell=True, universal_newlines=True)
         lines = output.strip().split('\n')[1:]  # Skip header line
         nodes = []
         for line in lines:
             node_info = line.split()
-            if len(node_info) == 5:
-                node_name, partition, state, _, _ = node_info
+            if len(node_info) == 6:
+                node_name, partition, state, _, _, cpus = node_info
                 if node_name[:4] not in use_prefix:
                     continue
                 if node_name in exclusion_list:
                     continue
                 if state.strip() == 'idle':
                     nodes.append(node_name)
+                    continue
+                _, idle_cpus, _, _ = cpus.split('/')
+                if idle_cpus >= cpu_required:
+                    nodes.append(node_name) 
         return nodes
     except subprocess.CalledProcessError:
         print("Error executing command.")
@@ -193,7 +197,7 @@ if __name__ == "__main__":
         args.time = '5:00:00'
 
     # Find nodes
-    idle_nodes = get_nodes(args.partition)
+    idle_nodes = get_nodes(args.partition, args.cpu)
     idle_nodes.reverse()
     if len(idle_nodes) < args.number + 1:
         print("No enough idle nodes now")
