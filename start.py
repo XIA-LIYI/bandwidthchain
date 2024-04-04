@@ -111,7 +111,7 @@ srun ./controller/zookeeper
     subprocess.run(['sbatch', script_path])
 
     print(f"Created {script_name}")
-    return script_path
+    return script_path + "\n"
 def create_worker_script_in_one_file(controller, num_scripts, nodes, start, step, cpu, time):
     # Ensure directory exists
     directory = "workers"
