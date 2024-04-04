@@ -8,7 +8,7 @@ import time
 
 use_prefix = ['xcnf', 'xcng', 'xgpc', 'xgpd', 'xgpe', 'xgpf', 'xgph', 'xgpg', 'xcne', 'amdg']
 exclusion_list = ['xgpe10', 'xgpe11', 'xgpf10', 'xgpf11']
-randomStamp = int(random() * 1000)
+randomStamp = int(random.random() * 1000)
 
 def get_nodes(partition, cpu_required):
     standard_nodes = get_nodes_with_partition("standard", cpu_required)
