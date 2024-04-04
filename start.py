@@ -113,7 +113,7 @@ srun ./controller/zookeeper
     subprocess.run(['sbatch', script_path])
 
     print(f"Created {script_name}")
-    return script_path + "\n"
+    return script_name + "\n"
 def create_worker_script_in_one_file(controller, num_scripts, nodes, start, step, cpu, time):
     # Ensure directory exists
     directory = "workers"
@@ -152,7 +152,7 @@ wait
         script_path = os.path.join(directory, script_name)
         with open(script_path, "w") as file:
             file.write(script_content)
-        jobname += script_path + "\n"
+        jobname += script_name + "\n"
         # Make the script executable
         os.chmod(script_path, 0o777)
         subprocess.run(['sbatch', script_path])
@@ -185,7 +185,7 @@ srun --ntasks=1 ./workers/bandwidthchain -start {start} -end {start + step} -za 
         script_path = os.path.join(directory, script_name)
         with open(script_path, "w") as file:
             file.write(script_content)
-        jobname += script_path + "\n"
+        jobname += script_name + "\n"
         # Make the script executable
         os.chmod(script_path, 0o777)
         subprocess.run(['sbatch', script_path])
