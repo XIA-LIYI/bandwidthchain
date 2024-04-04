@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+import random
 import subprocess
 import sys
 import argparse
@@ -7,6 +8,7 @@ import time
 
 use_prefix = ['xcnf', 'xcng', 'xgpc', 'xgpd', 'xgpe', 'xgpf', 'xgph', 'xgpg', 'xcne', 'amdg']
 exclusion_list = ['xgpe10', 'xgpe11', 'xgpf10', 'xgpf11']
+randomStamp = int(random() * 1000)
 
 def get_nodes(partition, cpu_required):
     standard_nodes = get_nodes_with_partition("standard", cpu_required)
@@ -87,7 +89,7 @@ def write_to_file(nodes, filename):
 
 def create_controller_script(controller, time):
     directory = "controller"
-    script_name = f"controller_script.sh"
+    script_name = f"controller_script_{randomStamp}.sh"
     if not os.path.exists(directory):
         os.makedirs(directory)
 
@@ -129,7 +131,7 @@ def create_worker_script_in_one_file(controller, num_scripts, nodes, start, step
             nodes_by_partition[i[1]] = {'count': 1, 'list':i[0] + ','}
     jobname = ""
     for partition, nodes_info in nodes_by_partition.items():
-        script_name = f"{partition}_script.sh"
+        script_name = f"{partition}_script_{randomStamp}.sh"
         
         sruns = f""
         for i in range(nodes_info['count']):
@@ -167,7 +169,7 @@ def create_worker_script(controller, num_scripts, nodes, start, step, cpu, time)
     jobname = ""
     # Generate and save shell scripts
     for i in nodes:
-        script_name = f"{i[0]}_script.sh"
+        script_name = f"{i[0]}_script_{randomStamp}.sh"
         script_content = f"""#!/bin/bash
 
 #SBATCH --time={time}
