@@ -1,43 +1,17 @@
 #!/bin/bash
 
-# Specify the folder where you want to find files
-folder="./controller/"
-
-# Check if the folder exists
-if [ ! -d "$folder" ]; then
-    echo "Folder '$folder' not found."
+# Check if jobs.txt exists
+if [ ! -f "jobs.txt" ]; then
+    echo "jobs.txt not found!"
     exit 1
 fi
 
-# Find all files in the specified folder
-files=$(find "$folder" -type f)
+# Read names from jobs.txt and cancel each job
+while IFS= read -r name; do
+    if [ -n "$name" ]; then
+        scancel --name "$name"
+        echo "Canceled job $name"
+    fi
+done < "jobs.txt"
 
-# Iterate over each file and run scancel
-for file in $files; do
-    filename=$(basename "$file")
-    # Run scancel with the filename
-    scancel --name "$filename"
-done
-
-echo "scancel command executed for all files in $folder"
-
-# Specify the folder where you want to find files
-folder="./workers/"
-
-# Check if the folder exists
-if [ ! -d "$folder" ]; then
-    echo "Folder '$folder' not found."
-    exit 1
-fi
-
-# Find all files in the specified folder
-files=$(find "$folder" -type f)
-
-# Iterate over each file and run scancel
-for file in $files; do
-    filename=$(basename "$file")
-    # Run scancel with the filename
-    scancel --name "$filename"
-done
-
-echo "scancel command executed for all files in $folder"
+echo "All jobs canceled."

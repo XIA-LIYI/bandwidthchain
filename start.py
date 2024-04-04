@@ -111,6 +111,7 @@ srun ./controller/zookeeper
     subprocess.run(['sbatch', script_path])
 
     print(f"Created {script_name}")
+    return script_path
 def create_worker_script_in_one_file(controller, num_scripts, nodes, start, step, cpu, time):
     # Ensure directory exists
     directory = "workers"
@@ -126,9 +127,10 @@ def create_worker_script_in_one_file(controller, num_scripts, nodes, start, step
             nodes_by_partition[i[1]]['list'] = nodes_by_partition[i[1]]['list'] + i[0] + ','
         else:
             nodes_by_partition[i[1]] = {'count': 1, 'list':i[0] + ','}
-    
+    jobname = ""
     for partition, nodes_info in nodes_by_partition.items():
         script_name = f"{partition}_script.sh"
+        
         sruns = f""
         for i in range(nodes_info['count']):
             sruns += f"srun --ntasks=1 ./workers/bandwidthchain -start {start} -end {start + step} -za {controller} -zport 6855 &\n"
@@ -148,22 +150,24 @@ wait
         script_path = os.path.join(directory, script_name)
         with open(script_path, "w") as file:
             file.write(script_content)
-
+        jobname += script_path + "\n"
         # Make the script executable
         os.chmod(script_path, 0o777)
         subprocess.run(['sbatch', script_path])
 
-        print(f"Created {script_name}")    
+        print(f"Created {script_name}")
+    return jobname
 def create_worker_script(controller, num_scripts, nodes, start, step, cpu, time):
     # Ensure directory exists
+    
     directory = "workers"
     if not os.path.exists(directory):
         os.makedirs(directory)
-
+        
+    jobname = ""
     # Generate and save shell scripts
     for i in nodes:
         script_name = f"{i[0]}_script.sh"
-        
         script_content = f"""#!/bin/bash
 
 #SBATCH --time={time}
@@ -179,13 +183,13 @@ srun --ntasks=1 ./workers/bandwidthchain -start {start} -end {start + step} -za 
         script_path = os.path.join(directory, script_name)
         with open(script_path, "w") as file:
             file.write(script_content)
-
+        jobname += script_path + "\n"
         # Make the script executable
         os.chmod(script_path, 0o777)
         subprocess.run(['sbatch', script_path])
 
         print(f"Created {script_name}")
-
+    return jobname
 if __name__ == "__main__":
     # Parse input
     parser = argparse.ArgumentParser(description='Retrieve idle nodes based on partition.')
@@ -230,24 +234,28 @@ if __name__ == "__main__":
             print(node, end=" ")
         print("\n")
 
+        with open("./jobs.txt", "w") as file:
         # Run scripts
-        print("Start running zookeeper")
-        try:
-            os.chmod('./controller/zookeeper', 0o777)
-        except Exception:
-            print("No zookeeper")
-        
-        create_controller_script(idle_nodes[0], args.time)
-        
-        time.sleep(10)
+            print("Start running zookeeper")
+            try:
+                os.chmod('./controller/zookeeper', 0o777)
+            except Exception:
+                print("No zookeeper")
+            
+            jobname = create_controller_script(idle_nodes[0], args.time)
+            file.write(jobname)
+            time.sleep(10)
 
-        print("Start running bandwidthchain")
-        try:
-            os.chmod('./workers/bandwidthchain', 0o777)
-        except Exception:
-            print("No bandwidthchain")
-        if args.number >= 10:
-            create_worker_script(idle_nodes[0][0], args.number, idle_nodes[1: 11], 0, args.step, args.cpu, args.time)
-            create_worker_script_in_one_file(idle_nodes[0][0], args.number, idle_nodes[11: (args.number + 1)], 10 * args.step, args.step, args.cpu, args.time)
-        else:
-            create_worker_script(idle_nodes[0][0], args.number, idle_nodes[1: (args.number + 1)], args.partition, args.step, args.cpu, args.time)
+            print("Start running bandwidthchain")
+            try:
+                os.chmod('./workers/bandwidthchain', 0o777)
+            except Exception:
+                print("No bandwidthchain")
+            if args.number >= 10:
+                jobname = create_worker_script(idle_nodes[0][0], args.number, idle_nodes[1: 11], 0, args.step, args.cpu, args.time)
+                file.write(jobname)
+                jobname = create_worker_script_in_one_file(idle_nodes[0][0], args.number, idle_nodes[11: (args.number + 1)], 10 * args.step, args.step, args.cpu, args.time)
+                file.write(jobname)
+            else:
+                jobname = create_worker_script(idle_nodes[0][0], args.number, idle_nodes[1: (args.number + 1)], args.partition, args.step, args.cpu, args.time)
+                file.write(jobname)
