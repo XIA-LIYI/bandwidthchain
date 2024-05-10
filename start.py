@@ -114,7 +114,7 @@ srun ./controller/zookeeper
 
     print(f"Created {script_name}")
     return script_name + "\n"
-def create_worker_script_in_one_file(controller, num_scripts, nodes, start, step, cpu, time):
+def create_worker_script_in_one_file(controller, num_scripts, nodes, start, step, cpu, time, total):
     # Ensure directory exists
     directory = "workers"
     if not os.path.exists(directory):
@@ -135,7 +135,7 @@ def create_worker_script_in_one_file(controller, num_scripts, nodes, start, step
         
         sruns = f""
         for i in range(nodes_info['count']):
-            sruns += f"srun --ntasks=1 ./workers/bandwidthchain -start {start} -end {start + step} -za {controller} -zport 6855 &\n"
+            sruns += f"srun --ntasks=1 ./workers/betterpob -n {total} -start {start} -end {start + step} -za {controller} -zport 6855 &\n"
             start += step
         script_content = f"""#!/bin/bash
 #SBATCH --time={time}
@@ -159,7 +159,7 @@ wait
 
         print(f"Created {script_name}")
     return jobname
-def create_worker_script(controller, num_scripts, nodes, start, step, cpu, time):
+def create_worker_script(controller, num_scripts, nodes, start, step, cpu, time, total):
     # Ensure directory exists
     
     directory = "workers"
@@ -179,7 +179,7 @@ def create_worker_script(controller, num_scripts, nodes, start, step, cpu, time)
 #SBATCH --ntasks-per-node=1
 #SBATCH --nodelist={i[0]}
 
-srun --ntasks=1 ./workers/bandwidthchain -start {start} -end {start + step} -za {controller} -zport 6855
+srun --ntasks=1 ./workers/betterpob -n {total} -start {start} -end {start + step} -za {controller} -zport 6855
 """
         start += step
         script_path = os.path.join(directory, script_name)
@@ -256,8 +256,8 @@ if __name__ == "__main__":
             if args.number >= 10:
                 jobname = create_worker_script(idle_nodes[0][0], args.number, idle_nodes[1: 11], 0, args.step, args.cpu, args.time)
                 file.write(jobname)
-                jobname = create_worker_script_in_one_file(idle_nodes[0][0], args.number, idle_nodes[11: (args.number + 1)], 10 * args.step, args.step, args.cpu, args.time)
+                jobname = create_worker_script_in_one_file(idle_nodes[0][0], args.number, idle_nodes[11: (args.number + 1)], 10 * args.step, args.step, args.cpu, args.time, args.step * args.number)
                 file.write(jobname)
             else:
-                jobname = create_worker_script(idle_nodes[0][0], args.number, idle_nodes[1: (args.number + 1)], args.partition, args.step, args.cpu, args.time)
+                jobname = create_worker_script(idle_nodes[0][0], args.number, idle_nodes[1: (args.number + 1)], args.partition, args.step, args.cpu, args.time, args.step * args.number)
                 file.write(jobname)
