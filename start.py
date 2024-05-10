@@ -248,16 +248,17 @@ if __name__ == "__main__":
             file.write(jobname)
             time.sleep(10)
 
-            print("Start running bandwidthchain")
+            print("Start running betterpob")
             try:
-                os.chmod('./workers/bandwidthchain', 0o777)
+                os.chmod('./workers/betterpob', 0o777)
             except Exception:
-                print("No bandwidthchain")
+                print("No betterpob")
             if args.number >= 10:
-                jobname = create_worker_script(idle_nodes[0][0], args.number, idle_nodes[1: 11], 0, args.step, args.cpu, args.time)
+                jobname = create_worker_script(idle_nodes[0][0], args.number, idle_nodes[1: 11], 0, args.step, args.cpu, args.time, str(args.step * args.number))
                 file.write(jobname)
-                jobname = create_worker_script_in_one_file(idle_nodes[0][0], args.number, idle_nodes[11: (args.number + 1)], 10 * args.step, args.step, args.cpu, args.time, args.step * args.number)
+                jobname = create_worker_script_in_one_file(idle_nodes[0][0], args.number, idle_nodes[11: (args.number + 1)], 10 * args.step, args.step, args.cpu, args.time, str(args.step * args.number))
                 file.write(jobname)
             else:
-                jobname = create_worker_script(idle_nodes[0][0], args.number, idle_nodes[1: (args.number + 1)], args.partition, args.step, args.cpu, args.time, args.step * args.number)
+                print(args.step * args.number)
+                jobname = create_worker_script(idle_nodes[0][0], args.number, idle_nodes[1: (args.number + 1)], 0, args.step, args.cpu, args.time, str(args.step * args.number))
                 file.write(jobname)
