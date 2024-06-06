@@ -6,8 +6,8 @@ import argparse
 import os
 import time
 
-use_prefix = ['xcnf', 'xcng', 'xgpc', 'xgpd', 'xgpe', 'xgpf', 'xgph', 'xgpg', 'xcne', 'amdg']
-exclusion_list = ['xgpe10', 'xgpe11', 'xgpf10', 'xgpf11']
+use_prefix = ['xcnf', 'xgpc', 'xgpd', 'xgpe', 'xgpf', 'xgph', 'xgpg', 'xcne', 'amdg']
+exclusion_list = ['xcng', 'xgpe10', 'xgpe11', 'xgpf10', 'xgpf11']
 randomStamp = int(random.random() * 1000)
 
 def get_nodes(partition, cpu_required):
