@@ -87,7 +87,7 @@ def write_to_file(nodes, filename):
         for node in nodes:
             f.write(node + '\n')
 
-def create_controller_script(controller, time):
+def create_controller_script(controller, time, numOfNode):
     directory = "controller"
     script_name = f"controller_script_{randomStamp}.sh"
     if not os.path.exists(directory):
@@ -102,7 +102,7 @@ def create_controller_script(controller, time):
 #SBATCH --ntasks-per-node=1
 #SBATCH --nodelist={controller[0]}
 
-srun ./controller/zookeeper
+srun ./controller/zookeeper -n {numOfNode}
 """
     script_path = os.path.join(directory, script_name)
     with open(script_path, "w") as file:
@@ -244,7 +244,7 @@ if __name__ == "__main__":
             except Exception:
                 print("No zookeeper")
             
-            jobname = create_controller_script(idle_nodes[0], args.time)
+            jobname = create_controller_script(idle_nodes[0], args.time, args.number * args.step)
             file.write(jobname)
             time.sleep(10)
 
