@@ -1,4 +1,4 @@
-# computing cluster automation script
+# SoC computing cluster automation script
 
 ## Basic Usage
 1. `git clone` the project into `~/cluster_tool`, and then `cd ~/cluster_tool`
@@ -8,7 +8,7 @@
 5. `./start.py`
 6. use `./delete.sh` to delete the log files, and `./cancel.sh` to cancel the running experiments
 
-## advanced options
+## Advanced options
 `./start.py` can be run with the following options:
 * `--number`, `-n`: number of machines needed, default value is `4`
 * `--partition`, `-p`: partition to filter by, default partition is `medium`
