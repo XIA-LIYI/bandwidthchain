@@ -11,9 +11,10 @@ exclusion_list = ['xcng', 'xgpe10', 'xgpe11', 'xgpf10', 'xgpf11']
 randomStamp = int(random.random() * 1000)
 
 def get_nodes(partition, cpu_required):
-    standard_nodes = get_nodes_with_partition("standard", cpu_required)
-    medium_nodes = get_nodes_with_partition("medium", cpu_required)
+    normal_nodes = get_nodes_with_partition("normal", cpu_required)
+    gpu_nodes = get_nodes_with_partition("gpu", cpu_required)
     long_nodes = get_nodes_with_partition("long", cpu_required)
+    gpu_long_nodes = get_nodes_with_partition("gpu-long", cpu_required)
     result_idle_nodes = []
     record_idle_nodes = []
     result_mix_nodes = []
@@ -28,32 +29,39 @@ def get_nodes(partition, cpu_required):
             continue
         record_mix_nodes.append(node)
         result_mix_nodes.append([node, "long"])
-                
+    for node in gpu_long_nodes[0]:
+        if node in record_idle_nodes:
+            continue
+        record_idle_nodes.append(node)
+        result_idle_nodes.append([node, "gpu_long"])
+    for node in gpu_long_nodes[1]:
+        if node in record_mix_nodes:
+            continue
+        record_mix_nodes.append(node)
+        result_mix_nodes.append([node, "gpu_long"])                
     if partition == "long":
         return [result_idle_nodes, result_mix_nodes]
-    for node in medium_nodes[0]:
+    for node in normal_nodes[0]:
         if node in record_idle_nodes:
             continue
         record_idle_nodes.append(node)
-        result_idle_nodes.append([node, "medium"])
-    for node in medium_nodes[1]:
+        result_idle_nodes.append([node, "normal"])
+    for node in normal_nodes[1]:
         if node in record_mix_nodes:
             continue
         record_mix_nodes.append(node)
-        result_mix_nodes.append([node, "medium"])
-    if partition == "medium":
-        return [result_idle_nodes, result_mix_nodes]
-    for node in standard_nodes[0]:
+        result_mix_nodes.append([node, "normal"])
+    for node in gpu_nodes[0]:
         if node in record_idle_nodes:
             continue
         record_idle_nodes.append(node)
-        result_idle_nodes.append([node, "standard"])
-    for node in standard_nodes[1]:
+        result_idle_nodes.append([node, "gpu"])
+    for node in gpu_nodes[1]:
         if node in record_mix_nodes:
             continue
         record_mix_nodes.append(node)
-        result_mix_nodes.append([node, "standard"])
-    if partition == "standard":
+        result_mix_nodes.append([node, "gpu"])
+    if partition == "normal":
         return [result_idle_nodes, result_mix_nodes]
 
 def get_nodes_with_partition(partition, cpu_required):
@@ -207,7 +215,7 @@ if __name__ == "__main__":
         args.number = int(args.number)
 
     if args.partition == None:
-        args.partition = 'medium'
+        args.partition = 'normal'
 
     if args.step == None:
         args.step = 50
