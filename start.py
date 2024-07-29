@@ -227,7 +227,7 @@ if __name__ == "__main__":
         args.cpu = int(args.cpu)
 
     if args.time == None:
-        args.time = '5:00:00'
+        args.time = '3:00:00'
 
     # Find nodes
     idle_nodes, mix_nodes = get_nodes(args.partition, args.cpu)
