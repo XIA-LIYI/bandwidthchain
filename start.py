@@ -206,7 +206,8 @@ if __name__ == "__main__":
     parser.add_argument('--number', '-n', help='Number of machines needed') # default is 4
     parser.add_argument('--cpu', '-c', help='Number of cpus per machine') # default is 4
     parser.add_argument('--step', '-s', help='Number of nodes in one machines') # default is 50
-    parser.add_argument('--time', '-t', help='Maximum experiment time') # default is 5:00:00
+    parser.add_argument('--time', '-t', help='Maximum experiment time') # default is 3:00:00
+    parser.add_argument('--zookeeper', '-z', help='Node that runs zookeeper') # default is None
     args = parser.parse_args()
     if args.number == None:
         args.number = 4
@@ -237,7 +238,8 @@ if __name__ == "__main__":
         print("No enough idle nodes now")
     else:
         idle_nodes.extend(mix_nodes)
-        print(f"Zookeeper runs on {idle_nodes[0]}")
+        if args.zookeeper == None:
+            print(f"Zookeeper runs on {idle_nodes[0]}")
         print(f"Bandwidthchain runs on:")
         for node in idle_nodes[1: args.number + 1]:
             print(node, end=" ")
@@ -250,10 +252,13 @@ if __name__ == "__main__":
                 os.chmod('./controller/zookeeper', 0o777)
             except Exception:
                 print("No zookeeper")
-            
-            jobname = create_controller_script(idle_nodes[0], args.time, args.number * args.step)
-            file.write(jobname)
-            time.sleep(10)
+            if args.zookeeper == None:
+                jobname = create_controller_script(idle_nodes[0], args.time, args.number * args.step)
+                file.write(jobname)
+                controller = idle_nodes[0][0]
+                time.sleep(10)
+            else:
+                controller = args.zookeeper
 
             print("Start running betterpob")
             try:
@@ -261,11 +266,11 @@ if __name__ == "__main__":
             except Exception:
                 print("No betterpob")
             if args.number >= 10:
-                jobname = create_worker_script(idle_nodes[0][0], args.number, idle_nodes[1: 11], 0, args.step, args.cpu, args.time, str(args.step * args.number))
+                jobname = create_worker_script(controller, args.number, idle_nodes[1: 11], 0, args.step, args.cpu, args.time, str(args.step * args.number))
                 file.write(jobname)
-                jobname = create_worker_script_in_one_file(idle_nodes[0][0], args.number, idle_nodes[11: (args.number + 1)], 10 * args.step, args.step, args.cpu, args.time, str(args.step * args.number))
+                jobname = create_worker_script_in_one_file(controller, args.number, idle_nodes[11: (args.number + 1)], 10 * args.step, args.step, args.cpu, args.time, str(args.step * args.number))
                 file.write(jobname)
             else:
                 print(args.step * args.number)
-                jobname = create_worker_script(idle_nodes[0][0], args.number, idle_nodes[1: (args.number + 1)], 0, args.step, args.cpu, args.time, str(args.step * args.number))
+                jobname = create_worker_script(controller, args.number, idle_nodes[1: (args.number + 1)], 0, args.step, args.cpu, args.time, str(args.step * args.number))
                 file.write(jobname)
