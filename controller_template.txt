@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#SBATCH --time={time}
+#SBATCH --partition={partition}
+#SBATCH --nodes=1
+#SBATCH --ntasks=1 --cpus-per-task=10
+#SBATCH --ntasks-per-node=1
+#SBATCH --nodelist={node}
+
+srun ./controller/zookeeper -n {n}

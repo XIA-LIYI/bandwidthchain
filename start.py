@@ -6,15 +6,17 @@ import argparse
 import os
 import time
 
-use_prefix = ['xcnf', 'xgpc', 'xgpd', 'xgpe', 'xgpf', 'xgph', 'xgpg', 'xcne', 'amdg']
-exclusion_list = ['xcng', 'xgpe10', 'xgpe11', 'xgpf10', 'xgpf11']
+use_prefix = ['xcnf', 'xcne']
+exclusion_list = []
+# use_prefix = ['xcnf', 'xgpc', 'xgpd', 'xgpe', 'xgpf', 'xgph', 'xgpg', 'xcne', 'amdg']
+# exclusion_list = ['xcng', 'xgpe10', 'xgpe11', 'xgpf10', 'xgpf11']
 randomStamp = int(random.random() * 1000)
 
 def get_nodes(partition, cpu_required):
     normal_nodes = get_nodes_with_partition("normal", cpu_required)
-    gpu_nodes = get_nodes_with_partition("gpu", cpu_required)
+    # gpu_nodes = get_nodes_with_partition("gpu", cpu_required)
     long_nodes = get_nodes_with_partition("long", cpu_required)
-    gpu_long_nodes = get_nodes_with_partition("gpu-long", cpu_required)
+    # gpu_long_nodes = get_nodes_with_partition("gpu-long", cpu_required)
     result_idle_nodes = []
     record_idle_nodes = []
     result_mix_nodes = []
@@ -29,16 +31,16 @@ def get_nodes(partition, cpu_required):
             continue
         record_mix_nodes.append(node)
         result_mix_nodes.append([node, "long"])
-    for node in gpu_long_nodes[0]:
-        if node in record_idle_nodes:
-            continue
-        record_idle_nodes.append(node)
-        result_idle_nodes.append([node, "gpu_long"])
-    for node in gpu_long_nodes[1]:
-        if node in record_mix_nodes:
-            continue
-        record_mix_nodes.append(node)
-        result_mix_nodes.append([node, "gpu_long"])                
+    # for node in gpu_long_nodes[0]:
+    #     if node in record_idle_nodes:
+    #         continue
+    #     record_idle_nodes.append(node)
+    #     result_idle_nodes.append([node, "gpu_long"])
+    # for node in gpu_long_nodes[1]:
+    #     if node in record_mix_nodes:
+    #         continue
+    #     record_mix_nodes.append(node)
+    #     result_mix_nodes.append([node, "gpu_long"])                
     if partition == "long":
         return [result_idle_nodes, result_mix_nodes]
     for node in normal_nodes[0]:
@@ -51,16 +53,16 @@ def get_nodes(partition, cpu_required):
             continue
         record_mix_nodes.append(node)
         result_mix_nodes.append([node, "normal"])
-    for node in gpu_nodes[0]:
-        if node in record_idle_nodes:
-            continue
-        record_idle_nodes.append(node)
-        result_idle_nodes.append([node, "gpu"])
-    for node in gpu_nodes[1]:
-        if node in record_mix_nodes:
-            continue
-        record_mix_nodes.append(node)
-        result_mix_nodes.append([node, "gpu"])
+    # for node in gpu_nodes[0]:
+    #     if node in record_idle_nodes:
+    #         continue
+    #     record_idle_nodes.append(node)
+    #     result_idle_nodes.append([node, "gpu"])
+    # for node in gpu_nodes[1]:
+    #     if node in record_mix_nodes:
+    #         continue
+    #     record_mix_nodes.append(node)
+    #     result_mix_nodes.append([node, "gpu"])
     if partition == "normal":
         return [result_idle_nodes, result_mix_nodes]
 
@@ -97,21 +99,14 @@ def write_to_file(nodes, filename):
 
 def create_controller_script(controller, time, numOfNode):
     directory = "controller"
-    script_name = f"controller_script_{randomStamp}.sh"
+    script_name = f"controller_script_100.sh"
     if not os.path.exists(directory):
         os.makedirs(directory)
 
-    script_content = f"""#!/bin/bash
+    with open("controller_template.txt", "r") as f:
+        tmp = f.read()
 
-#SBATCH --time={time}
-#SBATCH --partition={controller[1]}
-#SBATCH --nodes=1
-#SBATCH --ntasks=1 --cpus-per-task=10
-#SBATCH --ntasks-per-node=1
-#SBATCH --nodelist={controller[0]}
-
-srun ./controller/zookeeper -n {numOfNode}
-"""
+    script_content = tmp.format(**{"time" : time, "partition": controller[1], "node": controller[0], "n": numOfNode})
     script_path = os.path.join(directory, script_name)
     with open(script_path, "w") as file:
         file.write(script_content)
@@ -122,6 +117,7 @@ srun ./controller/zookeeper -n {numOfNode}
 
     print(f"Created {script_name}")
     return script_name + "\n"
+
 def create_worker_script_in_one_file(controller, num_scripts, nodes, start, step, cpu, time, total):
     # Ensure directory exists
     directory = "workers"
@@ -178,17 +174,19 @@ def create_worker_script(controller, num_scripts, nodes, start, step, cpu, time,
     # Generate and save shell scripts
     for i in nodes:
         script_name = f"{i[0]}_script_{randomStamp}.sh"
-        script_content = f"""#!/bin/bash
-
-#SBATCH --time={time}
-#SBATCH --partition={i[1]}
-#SBATCH --nodes=1
-#SBATCH --ntasks=1 --cpus-per-task={cpu}
-#SBATCH --ntasks-per-node=1
-#SBATCH --nodelist={i[0]}
-
-srun --ntasks=1 ./workers/betterpob -n {total} -start {start} -end {start + step} -za {controller} -zport 6855
-"""
+        with open("worker_template.txt", "r") as f:
+            tmp = f.read()
+        fillIn = {
+            "time": time, 
+            "partition": i[1], 
+            "cpu": cpu, 
+            "node": i[0], 
+            "total": total, 
+            "start": start, 
+            "end": start + step, 
+            "controller": controller
+        }
+        script_content = tmp.format(**fillIn)
         start += step
         script_path = os.path.join(directory, script_name)
         with open(script_path, "w") as file:
@@ -200,6 +198,7 @@ srun --ntasks=1 ./workers/betterpob -n {total} -start {start} -end {start + step
 
         print(f"Created {script_name}")
     return jobname
+
 if __name__ == "__main__":
     # Parse input
     parser = argparse.ArgumentParser(description='Retrieve idle nodes based on partition.')
